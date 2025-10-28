@@ -61,11 +61,8 @@ class Direction:
 #     }
 
 app = Flask(__name__, static_folder='../dist', static_url_path='')
-CORS(
-    app,
-    resources={r"/api/*": {"origins": ["https://snake-ai-gamma.vercel.app/"]}},
-    supports_credentials=True
-)
+CORS(app, resources={r"/*": {"origins": "*"}})
+
 
 
 # Global variables for game state and training
