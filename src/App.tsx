@@ -34,11 +34,12 @@ function App() {
     { id: 'dijkstra', name: 'Dijkstra' },
     { id: 'rule_based', name: 'Rule-Based' }
   ];
-
+  
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
   const startGame = async () => {
     try {
       console.log('Starting game with algorithm:', selectedAlgorithm);
-      const response = await fetch('http://localhost:5000/api/game/start', {
+      const response = await fetch(`${API_URL}/api/game/start`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ algorithm: selectedAlgorithm })
