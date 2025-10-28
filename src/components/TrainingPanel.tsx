@@ -38,19 +38,21 @@ const TrainingPanel: React.FC = () => {
     best_score: 0,
     fitness: 0,
   });
+
   const [trainingConfig, setTrainingConfig] = useState({
     generations: 50,
     population_size: 100,
     mutation_rate: 0.1,
   });
 
+  // 👇 Define your API base URL here
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
   useEffect(() => {
     const interval = setInterval(async () => {
       if (trainingStatus.status === "training") {
         try {
-          const response = await fetch(
-            "http://localhost:5000/api/training/status"
-          );
+          const response = await fetch(`${API_URL}/api/training/status`);
           const data = await response.json();
           setTrainingStatus(data);
         } catch (error) {
@@ -60,11 +62,11 @@ const TrainingPanel: React.FC = () => {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [trainingStatus.status]);
+  }, [trainingStatus.status, API_URL]);
 
   const startTraining = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/training/start", {
+      const response = await fetch(`${API_URL}/api/training/start`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(trainingConfig),
@@ -87,7 +89,7 @@ const TrainingPanel: React.FC = () => {
 
   const stopTraining = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/training/stop", {
+      const response = await fetch(`${API_URL}/api/training/stop`, {
         method: "POST",
       });
 
@@ -209,8 +211,6 @@ const TrainingPanel: React.FC = () => {
               max="1"
             />
           </div>
-
-          <div></div>
         </div>
       </div>
 
@@ -296,35 +296,33 @@ const TrainingPanel: React.FC = () => {
         )}
 
         {trainingStatus.status === "completed" && (
-          <div className="text-center py-4">
-            <div className="text-green-400 mb-2">
-              <Award size={48} className="mx-auto" />
+          <>
+            <div className="text-center py-4">
+              <div className="text-green-400 mb-2">
+                <Award size={48} className="mx-auto" />
+              </div>
+              <p className="text-white text-lg font-semibold">
+                Training completed successfully!
+              </p>
+              <p className="text-slate-300">
+                Best score achieved: {trainingStatus.best_score}
+              </p>
             </div>
-            <p className="text-white text-lg font-semibold">
-              Training completed successfully!
-            </p>
-            <p className="text-slate-300">
-              Best score achieved: {trainingStatus.best_score}
-            </p>
-          </div>
-        )}
 
-        {trainingStatus.status === "completed" && (
-          <div className="bg-slate-700/50 rounded-lg p-6 mt-4">
-            <h3 className="text-lg font-semibold text-white mb-4">
-              Score Progress Over Generations
-            </h3>
-            <ScoreChart />
-          </div>
-        )}
+            <div className="bg-slate-700/50 rounded-lg p-6 mt-4">
+              <h3 className="text-lg font-semibold text-white mb-4">
+                Score Progress Over Generations
+              </h3>
+              <ScoreChart />
+            </div>
 
-        {trainingStatus.status === "completed" && (
-          <div className="bg-slate-700/50 rounded-lg p-6 mt-4">
-            <h3 className="text-lg font-semibold text-white mb-4">
-              Fitness Progress Over Generations
-            </h3>
-            <FitnessChart />
-          </div>
+            <div className="bg-slate-700/50 rounded-lg p-6 mt-4">
+              <h3 className="text-lg font-semibold text-white mb-4">
+                Fitness Progress Over Generations
+              </h3>
+              <FitnessChart />
+            </div>
+          </>
         )}
 
         {trainingStatus.status === "error" && trainingStatus.error && (

@@ -9,6 +9,9 @@ interface Model {
 }
 
 const ModelManager: React.FC = () => {
+  // 👇 Define your API base URL here
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
   const [models, setModels] = useState<Model[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedModel, setSelectedModel] = useState<string | null>(null);
@@ -19,7 +22,7 @@ const ModelManager: React.FC = () => {
 
   const fetchModels = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/models/list');
+      const response = await fetch(`${API_URL}/api/models/list`);
       const data = await response.json();
       setModels(data.models || []);
     } catch (error) {
@@ -31,7 +34,7 @@ const ModelManager: React.FC = () => {
 
   const loadModel = async (filename: string) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/models/load/${filename}`, {
+      const response = await fetch(`${API_URL}/api/models/load/${filename}`, {
         method: 'POST'
       });
       

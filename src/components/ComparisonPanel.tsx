@@ -33,6 +33,9 @@ interface ComparisonStatus {
 }
 
 const ComparisonPanel: React.FC = () => {
+  // 👇 Define your API base URL here
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
   const [comparisonStatus, setComparisonStatus] = useState<ComparisonStatus>({
     status: "idle",
     progress: 0,
@@ -73,7 +76,7 @@ const ComparisonPanel: React.FC = () => {
   useEffect(() => {
     const fetchInitialStatus = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/comparison/status");
+        const response = await fetch(`${API_URL}/api/comparison/status`);
         const data = await response.json();
         setComparisonStatus(data);
       } catch (error) {
@@ -89,7 +92,7 @@ const ComparisonPanel: React.FC = () => {
     const interval = setInterval(async () => {
       if (comparisonStatus.status === "running" && isMounted) {
         try {
-          const response = await fetch("http://localhost:5000/api/comparison/status");
+          const response = await fetch(`${API_URL}/api/comparison/status`);
           const data = await response.json();
           if (isMounted) {
             setComparisonStatus(data);
@@ -108,7 +111,7 @@ const ComparisonPanel: React.FC = () => {
 
   const startComparison = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/comparison/run", {
+      const response = await fetch(`${API_URL}/api/comparison/run`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -121,7 +124,7 @@ const ComparisonPanel: React.FC = () => {
       if (data.success) {
         // Don't reset the status here, let the polling update it
         // This prevents the progress bar from resetting when switching tabs
-        await fetch("http://localhost:5000/api/comparison/status")
+        await fetch(`${API_URL}/api/comparison/status`)
           .then(res => res.json())
           .then(data => setComparisonStatus(data))
           .catch(error => console.error("Failed to fetch comparison status:", error));
