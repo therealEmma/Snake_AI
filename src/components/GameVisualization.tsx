@@ -29,13 +29,13 @@ const GameVisualization: React.FC<GameVisualizationProps> = ({
   const GRID_SIZE = 20;
   const CANVAS_WIDTH = 800;
   const CANVAS_HEIGHT = 600;
-
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
   useEffect(() => {
     if (!isRunning || !gameState) return;
 
     const gameLoop = setInterval(async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/game/step', {
+        const response = await fetch(`${API_URL}/api/game/step`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' }
         });
